@@ -3,21 +3,22 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <Windows.h>
 
-std::string city_institute; 
-struct Student{
+std::string city_institute; // Глобальная переменная с названием основоного города  
+struct Student{ // Структура с информацией об одном ученике. 
 	std::string name; 
 	std::string city;
 	std::string school; 
 };
 
 
-struct Data {
+struct Data { // Создание структуры, где будут находится вектор со стундентами, и два словаря, с количеством городов и школ. 
 	std::vector<Student> stundent; 
 	std::map<std::string, unsigned> city_num;
 	std::map<std::string, unsigned> school_max;
 };
-void qsortRecursive(std::vector<std::string>& a, int n) {
+void qsortRecursive(std::vector<std::string>& a, int n) { // Сортировка пузырьком читай https://nicknixer.ru/programmirovanie/algoritm-puzyrkovoj-sortirovki-odnomernogo-massiva-na-c/
 	bool sorted{};
 	
 	do {
@@ -35,7 +36,7 @@ void qsortRecursive(std::vector<std::string>& a, int n) {
 	} while (!sorted);
 }
 
-void merge(std::vector<int>& a, int n)
+void merge(std::vector<int>& a, int n) // Сортировка слиянием https://prog-cpp.ru/sort-merge
 {
 	int mid = n / 2; 
 	if (n % 2 == 1)
@@ -82,27 +83,28 @@ void merge(std::vector<int>& a, int n)
 	}
 	 
 }
-void print_menu() {
+void print_menu() { // функция, которая будет выводить информацию в консоль
 	system("cls");  
-	printf("What do you want to do?\n");
-	printf("1. Add good to list\n");
-	printf("2. Print all goods in list\n");
-	printf("3. Print the highest price\n");
-	printf("4. Print the lowest price\n");
-	printf("5. Exit\n");
+	printf("Город института\n");
+	printf("1. Добавление\n");
+	printf("2. Вывод по городам\n");
+	printf("3. Вывод всех\n");
+	printf("4. Сортировка номеров школ\n");
+	printf("5. Сортировка по именам \n");
+	printf("6. Сортировка по городам \n");
 	printf(">");
 }
 
 
-void adding() {
+void adding() {  // функция для добавления студента
 	Student student; 
-	std::cout << "name"; 
+	std::cout << "name";  // Ввод информации 
 	std::cin >> student.name;
 	std::cout << "city";
 	std::cin >> student.city;
 	std::cout << "school";
 	std::cin >> student.school;
-	std::string itog = student.name + ", " + student.city + ", " + (student.school);
+	std::string itog = student.name + ", " + student.city + ", " + (student.school); // соед с ",", чтобы легче работать с данными и записываем в конец файла 
 	std::ofstream out;
 	out.open("test.txt", std::ios::app);
 	if (out.is_open()) {
@@ -111,22 +113,22 @@ void adding() {
 	out.close();
 
 }
-Data read_file() {
-	Data data; 
+Data read_file() { // функция для загрузки из файла данных 
+	Data data; // создаем структуру 
 	std::string line; 
-	std::ifstream in("test.txt");
+	std::ifstream in("test.txt"); // открываем файл 
 	if (in.is_open()) {
-		while (std::getline(in, line)) {
+		while (std::getline(in, line)) { // бесконечный цикл, который проходится по всем строчкам, пока они не законч 
 			Student student; 
 
-			int index = line.find(",");
-			int index_r = line.rfind(",");
-			line.erase(remove(line.begin(), line.end(), ' '), line.end());
-			student.name = line.substr(0, index);
-			student.city = line.substr(index + 1, index_r - index - 2);
-			student.school = line.substr(index_r);
-			data.stundent.push_back(student);
-			if (line.substr(index + 1, index_r - index - 2) != city_institute) {
+			int index = line.find(","); // определяем индекс первой ","
+			int index_r = line.rfind(","); // определяем индекс второй ","
+			line.erase(remove(line.begin(), line.end(), ' '), line.end()); // очищаем строчку от пробелов 
+			student.name = line.substr(0, index); // вытаскиваем имя 
+			student.city = line.substr(index + 1, index_r - index - 2); // вытаскиваем город
+			student.school = line.substr(index_r);// вытаскиваем номер школы
+			data.stundent.push_back(student);// добавляем в массив объект 
+			if (line.substr(index + 1, index_r - index - 2) != city_institute) { // проверка на город
 				data.city_num[line.substr(index + 1, index_r - index - 2)]++;
 			}
 			else {
@@ -138,7 +140,7 @@ Data read_file() {
 	in.close();
 	return data;
 }
-void print(std::vector<Student>& student) {
+void print(std::vector<Student>& student) { // вывод студентов
 	for (const auto& entry : student) {
 		std::cout << entry.name << std::endl;
 		std::cout << entry.city << std::endl;
@@ -146,7 +148,7 @@ void print(std::vector<Student>& student) {
 	}
 	
 }
-void print_city(Data data) {
+void print_city(Data data) { // вывод список городов
 	for (const auto& entry : data.city_num) {
 		std::cout << entry.first << ": " << entry.second << std::endl;
 
@@ -164,7 +166,8 @@ void print_city(Data data) {
  
 int main()
 {
-
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 	int variant; 
 	std::cout << "Введите название города, где находится институт";
 	std::cin >> city_institute;
